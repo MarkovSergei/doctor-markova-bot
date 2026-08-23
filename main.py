@@ -11,7 +11,7 @@ BOT_TOKEN = os.environ.get('BOT_TOKEN', '8770604625:AAHRjA_vHeE0kSzcnMm3T51OhzcE
 SITE_URL = 'https://doctor-markova.ru/podpiska'
 
 # Секретный ключ для связи с сайтом
-API_KEY = os.environ.get('API_KEY', 'CHANGE_ME')
+API_KEY = os.environ.get('API_KEY', 'K7mP9xR2vL5nQ8wT3yC6bN4jH1sF0da')
 
 
 def send_message(chat_id, text):
