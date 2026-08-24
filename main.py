@@ -4,13 +4,8 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Токен бота
 BOT_TOKEN = os.environ.get('BOT_TOKEN', '8770604625:AAHRjA_vHeE0kSzcnMm3T51OhzcEoklTz9c')
-
-# URL сайта
 SITE_URL = 'https://doctor-markova.ru/podpiska'
-
-# Секретный ключ для связи с сайтом
 API_KEY = os.environ.get('API_KEY', '')
 
 
@@ -30,7 +25,6 @@ def webhook():
     if not update:
         return jsonify({'ok': True})
 
-    # Обработка команды /start
     message = update.get('message')
     if message:
         text = message.get('text', '')
@@ -38,12 +32,10 @@ def webhook():
         telegram_id = str(message['from']['id'])
 
         if text.startswith('/start'):
-            # Получаем токен
             parts = text.split(' ')
             token = parts[1] if len(parts) > 1 else ''
 
             if token:
-                # Сообщаем сайту о подтверждении
                 confirm_url = f'{SITE_URL}/api/telegram_confirm.php'
                 data = {
                     'token': token,
@@ -84,7 +76,6 @@ def grant_access():
     if not telegram_id or not invite_link:
         return jsonify({'success': False, 'error': 'missing data'})
 
-    # Сообщение клиенту
     client_text = (
         '✅ Оплата получена\n\n'
         f'Подписка: {subscription_name}\n'
@@ -95,14 +86,13 @@ def grant_access():
 
     send_message(telegram_id, client_text)
 
-    # Сообщение жене
     admin_chat_id = os.environ.get('ADMIN_CHAT_ID', '')
     if admin_chat_id:
         admin_text = (
             '🔔 Новая оплата\n\n'
             f'Имя: {user_name}\n'
             f'Подписка: {subscription_name}\n'
-            f'Ожидайте заявку на вступление в канал.'
+            'Ожидайте заявку на вступление в канал.'
         )
         send_message(admin_chat_id, admin_text)
 
@@ -113,8 +103,6 @@ def grant_access():
 def index():
     return 'Bot is running'
 
-@app.route('/test_route', methods=['GET'])
-def test_route():
-    return 'OK'
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
