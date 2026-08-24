@@ -64,6 +64,51 @@ def webhook():
     return jsonify({'ok': True})
 
 
+@app.route('/api/grant_access', methods=['POST'])
+def grant_access():
+    data = request.get_json()
+
+    if not data:
+        return jsonify({'success': False, 'error': 'bad request'})
+
+    api_key = data.get('api_key', '')
+    telegram_id = data.get('telegram_id', '')
+    invite_link = data.get('invite_link', '')
+    end_date = data.get('end_date', '')
+    user_name = data.get('user_name', '')
+    subscription_name = data.get('subscription_name', '')
+
+    if api_key != API_KEY or not api_key:
+        return jsonify({'success': False, 'error': 'wrong key'})
+
+    if not telegram_id or not invite_link:
+        return jsonify({'success': False, 'error': 'missing data'})
+
+    # Сообщение клиенту
+    client_text = (
+        '✅ Оплата получена\n\n'
+        f'Подписка: {subscription_name}\n'
+        f'Активна до: {end_date}\n\n'
+        f'Ссылка на канал:\n{invite_link}\n\n'
+        'Нажмите «Вступить» и ожидайте подтверждения.'
+    )
+
+    send_message(telegram_id, client_text)
+
+    # Сообщение жене
+    admin_chat_id = os.environ.get('ADMIN_CHAT_ID', '')
+    if admin_chat_id:
+        admin_text = (
+            '🔔 Новая оплата\n\n'
+            f'Имя: {user_name}\n'
+            f'Подписка: {subscription_name}\n'
+            f'Ожидайте заявку на вступление в канал.'
+        )
+        send_message(admin_chat_id, admin_text)
+
+    return jsonify({'success': True})
+
+
 @app.route('/', methods=['GET'])
 def index():
     return 'Bot is running'
