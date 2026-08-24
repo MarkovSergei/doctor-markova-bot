@@ -113,6 +113,8 @@ def grant_access():
 def index():
     return 'Bot is running'
 
-
+@app.route('/test_route', methods=['GET'])
+def test_route():
+    return 'OK'
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
