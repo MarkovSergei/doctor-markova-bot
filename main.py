@@ -98,7 +98,52 @@ def grant_access():
 
     return jsonify({'success': True})
 
+@app.route('/api/send_notification', methods=['POST'])
+def send_notification():
+    data = request.get_json()
 
+    if not data:
+        return jsonify({'success': False, 'error': 'bad request'})
+
+    api_key = data.get('api_key', '')
+    notification_type = data.get('type', '')
+
+    if api_key != API_KEY or not api_key:
+        return jsonify({'success': False, 'error': 'wrong key'})
+
+    if notification_type == 'client_reminder':
+        telegram_id = data.get('telegram_id', '')
+        user_name = data.get('user_name', '')
+        subscription_name = data.get('subscription_name', '')
+        end_date = data.get('end_date', '')
+
+        text = (
+            f'Здравствуйте, {user_name}!\n\n'
+            f'Ваша подписка «{subscription_name}» заканчивается {end_date}.\n\n'
+            'Продлите её в личном кабинете, чтобы сохранить доступ.'
+        )
+        send_message(telegram_id, text)
+        return jsonify({'success': True})
+
+    if notification_type == 'admin_expired':
+        user_name = data.get('user_name', '')
+        subscription_name = data.get('subscription_name', '')
+        end_date = data.get('end_date', '')
+
+        admin_chat_id = os.environ.get('ADMIN_CHAT_ID', '')
+        if admin_chat_id:
+            text = (
+                '⚠️ Подписка истекла\n\n'
+                f'Имя: {user_name}\n'
+                f'Подписка: {subscription_name}\n'
+                f'Дата окончания: {end_date}\n\n'
+                'Действие: удалите пользователя из канала вручную.'
+            )
+            send_message(admin_chat_id, text)
+        return jsonify({'success': True})
+
+    return jsonify({'success': False, 'error': 'unknown type'})
+    
 @app.route('/', methods=['GET'])
 def index():
     return 'Bot is running'
