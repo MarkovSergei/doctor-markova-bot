@@ -98,6 +98,7 @@ def grant_access():
 
     return jsonify({'success': True})
 
+
 @app.route('/api/send_notification', methods=['POST'])
 def send_notification():
     data = request.get_json()
@@ -143,7 +144,8 @@ def send_notification():
         return jsonify({'success': True})
 
     return jsonify({'success': False, 'error': 'unknown type'})
-    
+
+
 @app.route('/', methods=['GET'])
 def index():
     return 'Bot is running'
