@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-BOT_TOKEN = os.environ.get('BOT_TOKEN', '8770604625:AAHRjA_vHeE0kSzcnMm3T51OhzcEoklTz9c')
+BOT_TOKEN = os.environ.get('BOT_TOKEN', '')
 SITE_URL = 'https://doctor-markova.ru/podpiska'
 API_KEY = os.environ.get('API_KEY', '')
 
